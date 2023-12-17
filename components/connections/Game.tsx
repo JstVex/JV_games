@@ -4,7 +4,8 @@ import { useState } from "react";
 import squareData from "@/data/connections/squares.json";
 import Buttons from "./Buttons";
 import Grid from "./Grid";
-import { SquareData } from "@/types/connections/connections";
+import { CorrectGuessDetails, SquareData } from "@/types/connections/connections";
+import CorrectGuessDisplay from "./CorrectGuessDisplay";
 
 const initialSquareData: SquareData[] = squareData.map((square) => ({
     ...square,
@@ -15,6 +16,7 @@ const initialSquareData: SquareData[] = squareData.map((square) => ({
 
 const Game = () => {
     const [squares, setSquares] = useState<SquareData[]>(initialSquareData);
+    const [correctGuessDetails, setCorrectGuessDetails] = useState<CorrectGuessDetails[]>([]);
 
     const handleSquareClick = (id: number) => {
         // To ensure that only 4 squares can be selected at a time
@@ -54,6 +56,11 @@ const Game = () => {
             square.category === selectedSquares[0].category);
 
         if (allSameCategory) {
+            const newGuess = {
+                category: selectedSquares[0].category,
+                words: selectedSquares.map(square => square.text)
+            };
+
             const remainingSquares = squares.filter(square => !square.selected);
 
             setSquares(remainingSquares);
@@ -64,6 +71,7 @@ const Game = () => {
 
     return (
         <div>
+            <CorrectGuessDisplay guesses={correctGuessDetails} />
             <Grid squares={squares} handleSquareClick={handleSquareClick} />
             <Buttons shuffleSquares={shuffleSquares} clearSquares={clearSquares} handleSubmit={handleSubmit} />
         </div>
