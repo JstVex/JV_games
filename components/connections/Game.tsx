@@ -48,7 +48,7 @@ const Game = () => {
         const selectedSquares = squares.filter(square => square.selected);
 
         if (selectedSquares.length !== 4) {
-            alert("Please select exactly 4 squares");
+            alert("Please select exactly 4 squares.");
             return;
         }
 
@@ -64,8 +64,9 @@ const Game = () => {
             const remainingSquares = squares.filter(square => !square.selected);
 
             setSquares(remainingSquares);
+            setCorrectGuessDetails([...correctGuessDetails, newGuess]);
         } else {
-            alert("Incorrect");
+            alert("Incorrect. The selected squares are not in the same category.");
         }
     };
 
