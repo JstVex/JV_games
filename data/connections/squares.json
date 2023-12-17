@@ -1,0 +1,18 @@
+[
+  { "id": 1, "text": "Apple", "category": "Fruits" },
+  { "id": 2, "text": "Banana", "category": "Fruits" },
+  { "id": 3, "text": "Orange", "category": "Fruits" },
+  { "id": 4, "text": "Mango", "category": "Fruits" },
+  { "id": 5, "text": "Lion", "category": "Animals" },
+  { "id": 6, "text": "Elephant", "category": "Animals" },
+  { "id": 7, "text": "Tiger", "category": "Animals" },
+  { "id": 8, "text": "Giraffe", "category": "Animals" },
+  { "id": 9, "text": "France", "category": "Countries" },
+  { "id": 10, "text": "Japan", "category": "Countries" },
+  { "id": 11, "text": "Brazil", "category": "Countries" },
+  { "id": 12, "text": "India", "category": "Countries" },
+  { "id": 13, "text": "Red", "category": "Colors" },
+  { "id": 14, "text": "Blue", "category": "Colors" },
+  { "id": 15, "text": "Green", "category": "Colors" },
+  { "id": 16, "text": "Yellow", "category": "Colors" }
+]

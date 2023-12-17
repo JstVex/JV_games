@@ -2,3 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+.square {
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Additional styles for merging into a rectangle */
