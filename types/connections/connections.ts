@@ -5,3 +5,8 @@ export interface SquareData {
     selected: boolean;
     isCorrect: boolean;
 }
+
+export interface CorrectGuessDetails {
+    category: string;
+    words: string[];
+}
