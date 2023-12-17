@@ -6,6 +6,8 @@ import Buttons from "./Buttons";
 import Grid from "./Grid";
 import { CorrectGuessDetails, SquareData } from "@/types/connections/connections";
 import CorrectGuessDisplay from "./CorrectGuessDisplay";
+import IncorrectGuesses from "./IncorrectGuesses";
+import GameWon from "./GameWon";
 
 const initialSquareData: SquareData[] = squareData.map((square) => ({
     ...square,
@@ -17,6 +19,8 @@ const initialSquareData: SquareData[] = squareData.map((square) => ({
 const Game = () => {
     const [squares, setSquares] = useState<SquareData[]>(initialSquareData);
     const [correctGuessDetails, setCorrectGuessDetails] = useState<CorrectGuessDetails[]>([]);
+    const [incorrectGuessCount, setIncorrectGuessCount] = useState<number>(0);
+    const [isGameWon, setIsGameWon] = useState<boolean>(false);
 
     const handleSquareClick = (id: number) => {
         // To ensure that only 4 squares can be selected at a time
@@ -65,16 +69,41 @@ const Game = () => {
 
             setSquares(remainingSquares);
             setCorrectGuessDetails([...correctGuessDetails, newGuess]);
+
+            if (remainingSquares.length == 0) {
+                setIsGameWon(true);
+            }
         } else {
-            alert("Incorrect. The selected squares are not in the same category.");
+            setIncorrectGuessCount(prevCount => prevCount + 1);
+
+            // Deselect all squares
+            const deselectSquares = squares.map(square => ({
+                ...square,
+                selected: false
+            }));
+            setSquares(deselectSquares);
         }
+    };
+
+    const handleReset = () => {
+        setSquares(initialSquareData);
+        setCorrectGuessDetails([]);
+        setIncorrectGuessCount(0);
+        setIsGameWon(false);
     };
 
     return (
         <div>
             <CorrectGuessDisplay guesses={correctGuessDetails} />
             <Grid squares={squares} handleSquareClick={handleSquareClick} />
-            <Buttons shuffleSquares={shuffleSquares} clearSquares={clearSquares} handleSubmit={handleSubmit} />
+            {isGameWon ? (
+                <GameWon incorrectGuessCount={incorrectGuessCount} handleReset={handleReset} />
+            ) : (
+                <>
+                    <Buttons shuffleSquares={shuffleSquares} clearSquares={clearSquares} handleSubmit={handleSubmit} />
+                    <IncorrectGuesses incorrectGuessCount={incorrectGuessCount} />
+                </>
+            )}
         </div>
     );
 }
