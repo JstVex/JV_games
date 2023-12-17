@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import squareData from "@/data/connections/squares.json";
 import Buttons from "./Buttons";
 import Grid from "./Grid";
@@ -15,12 +15,21 @@ const initialSquareData: SquareData[] = squareData.map((square) => ({
     isCorrect: false
 }));
 
+const shuffleArray = (array: SquareData[]): SquareData[] => {
+    let shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
 
 const Game = () => {
     const [squares, setSquares] = useState<SquareData[]>(initialSquareData);
     const [correctGuessDetails, setCorrectGuessDetails] = useState<CorrectGuessDetails[]>([]);
     const [incorrectGuessCount, setIncorrectGuessCount] = useState<number>(0);
     const [isGameWon, setIsGameWon] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleSquareClick = (id: number) => {
         // To ensure that only 4 squares can be selected at a time
@@ -35,11 +44,7 @@ const Game = () => {
     };
 
     const shuffleSquares = () => {
-        let shuffledSquares = [...squares];
-        for (let i = shuffledSquares.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledSquares[i], shuffledSquares[j]] = [shuffledSquares[j], shuffledSquares[i]];
-        }
+        const shuffledSquares = shuffleArray(squares);
         setSquares(shuffledSquares);
     };
 
@@ -92,16 +97,27 @@ const Game = () => {
         setIsGameWon(false);
     };
 
+    useEffect(() => {
+        setSquares(shuffleArray(initialSquareData));
+        setIsLoading(false);
+    }, []);
+
     return (
         <div>
-            <CorrectGuessDisplay guesses={correctGuessDetails} />
-            <Grid squares={squares} handleSquareClick={handleSquareClick} />
-            {isGameWon ? (
-                <GameWon incorrectGuessCount={incorrectGuessCount} handleReset={handleReset} />
+            {isLoading ? (
+                <p className="text-lg flex items-center justify-center h-60">Loading game...</p>
             ) : (
                 <>
-                    <Buttons shuffleSquares={shuffleSquares} clearSquares={clearSquares} handleSubmit={handleSubmit} />
-                    <IncorrectGuesses incorrectGuessCount={incorrectGuessCount} />
+                    <CorrectGuessDisplay guesses={correctGuessDetails} />
+                    <Grid squares={squares} handleSquareClick={handleSquareClick} />
+                    {isGameWon ? (
+                        <GameWon incorrectGuessCount={incorrectGuessCount} handleReset={handleReset} />
+                    ) : (
+                        <>
+                            <Buttons shuffleSquares={shuffleSquares} clearSquares={clearSquares} handleSubmit={handleSubmit} />
+                            <IncorrectGuesses incorrectGuessCount={incorrectGuessCount} />
+                        </>
+                    )}
                 </>
             )}
         </div>
