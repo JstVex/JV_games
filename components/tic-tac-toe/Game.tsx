@@ -9,10 +9,11 @@ const Game = () => {
     const [isXNext, setIsXNext] = useState<boolean>(true);
     const [winner, setWinner] = useState<CellValue>(null);
     const [isDraw, setIsDraw] = useState<boolean>(false);
+    const [isSinglePlayer, setIsSinglePlayer] = useState<boolean>(false);
 
     const handleCellClick = (index: number) => {
-        if (cells[index] !== null) {
-            return;
+        if (cells[index] !== null || winner || isDraw || (isSinglePlayer && !isXNext)) {
+            return; // Prevent move if the cell is occupied, or the game has ended
         }
 
         const newCells: Cells = [...cells];
@@ -45,6 +46,29 @@ const Game = () => {
         setWinner(null);
     }
 
+    const makeAIMove = () => {
+        if (winner || isDraw) {
+            return; // Prevent AI move if the game has ended
+        }
+
+        const emptyIndices = cells
+            .map((cell, index) => (cell === null ? index : null))
+            .filter((index) => index !== null);
+
+        if (emptyIndices.length === 0) return;
+
+        const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+        const newCells = [...cells];
+        newCells[randomIndex] = 'O'; // Assuming AI always plays 'O'
+        setCells(newCells);
+        setIsXNext(true); // Switch turn back to the human player
+    };
+
+    const changeMode = () => {
+        setIsSinglePlayer(!isSinglePlayer);
+        restartGame();
+    }
+
     useEffect(() => {
         const winner = checkForWinner(cells);
         setWinner(winner);
@@ -54,11 +78,20 @@ const Game = () => {
         } else {
             setIsDraw(false);
         }
+
+        if (isSinglePlayer && !isXNext && !winner && cells.includes(null)) {
+            setTimeout(makeAIMove, 500);
+        }
     }, [cells]);
 
 
     return (
         <div className="flex flex-col justify-center items-center mt-20">
+            <button
+                className="mb-5 bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
+                onClick={changeMode}>
+                {isSinglePlayer ? 'Switch to Two-Player' : 'Switch to Single-Player'}
+            </button>
             <GameBoard cells={cells} onCellClick={handleCellClick} />
             <button
                 className="mt-6 bg-zinc-500 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded"
